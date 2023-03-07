@@ -34,7 +34,7 @@ export const ShortenerInput = component$((props: ShortenerInputProps) => {
       <div class="sm:input-group mb-3 flex-col sm:flex-row gap-2 sm:gap-0">
         <input
           ref={searchInput}
-          onKeyUp$={props.onKeyUp$}
+          // onKeyUp$={props.onKeyUp$}
           onInput$={props.onInput$}
           value={state.inputValue}
           type="text"

@@ -14,7 +14,7 @@ const getShortenUrl = async (originalUrl: string) => {
 
     const data = await result.json();
 
-    data.newUrl = "hello.world"
+    data.newUrl = originalUrl
 
     return data;
 };
@@ -24,7 +24,7 @@ export const handleShortener = async (store: Store) => {
 
     store.loading = true;
 
-    const response = await getShortenUrl(urlInput);
+    const response = await getShortenUrl(urlInput)
 
     store.loading = false;
     store.showResult = true;

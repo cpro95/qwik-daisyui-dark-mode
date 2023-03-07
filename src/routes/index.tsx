@@ -72,7 +72,7 @@ export default component$(() => {
                 </p>
               </article>
               <ShortenerInput
-                onKeyUp$={(event) => {
+                onKeyUp$={(event: KeyboardEvent) => {
                   if (
                     event.key.toLowerCase() === "enter" &&
                     state.inputValue.length > 0

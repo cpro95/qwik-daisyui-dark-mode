@@ -5,6 +5,7 @@ import {
   useSignal,
   useStore,
   useStylesScoped$,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Loader } from "~/components/loader/loader";
@@ -14,6 +15,7 @@ import { ThemeSwitcher } from "~/components/theme-switcher/theme-switcher";
 import { Tooltip } from "~/components/tooltip/tooltip";
 import { copyToClipboard, openUrl } from "~/utils";
 import styles from "./index.css?inline";
+import L from "leaflet";
 
 export const InputContext = createContextId("input");
 
@@ -46,6 +48,28 @@ export default component$(() => {
 
   useContextProvider(InputContext, state);
 
+  const myMap = useSignal<HTMLElement>();
+
+  useVisibleTask$(() => {
+    if (myMap.value) {
+      // create a Leaflet map instance
+      const map = L.map(myMap.value).setView([37.62682, 127.15173], 13);
+
+      // add a tile layer to the map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(map);
+
+      const myHome = L.marker([37.62682, 127.15173]).addTo(map);
+      myHome.bindPopup("<b>My Home</b>").openPopup();
+
+      // cleanup function to remove the map when the component unmounts
+      return () => map.remove();
+    }
+  });
+
   return (
     <div class="h-screen overflow-x-hidden overflow-y-auto md:overflow-hidden">
       <div class="min-h-screen flex flex-col">
@@ -71,8 +95,15 @@ export default component$(() => {
                   QwikCity with <b>TailwindCSS</b> and <b>DaisyUI</b>
                 </p>
               </article>
+
+              {/* leaflet map insertion */}
+              <div
+                ref={myMap}
+                style={{ height: "500px", width: "500px" }}
+              ></div>
+
               <ShortenerInput
-                onKeyUp$={(event: KeyboardEvent) => {
+                onKeyUp$={(event) => {
                   if (
                     event.key.toLowerCase() === "enter" &&
                     state.inputValue.length > 0
